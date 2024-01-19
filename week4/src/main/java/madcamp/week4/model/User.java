@@ -7,15 +7,12 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 public class User {
     @Id
     private Long id;
 
-    private String password;
-
     private String userName;
 
-    private String education;
+    private String password;
 
 }
