@@ -17,7 +17,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-!build/libs/week4-0.0.1-SNAPSHOT.jar
+# !build/libs/week4-0.0.1-SNAPSHOT.jar
 ### IntelliJ IDEA ###
 .idea
 *.iws
