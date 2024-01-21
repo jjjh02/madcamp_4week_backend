@@ -18,6 +18,7 @@ public class UserController {
     private UserService userService;
 
     // 로그인
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<?> logInUser(@RequestBody User user) throws LoginException {
         User loggedinUser = userService.loginUser(user.getUserName(), user.getPassword());
@@ -25,6 +26,7 @@ public class UserController {
     }
 
     // 회원가입
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@RequestBody User user){
         User signupedUser = userService.signupUser(user);
