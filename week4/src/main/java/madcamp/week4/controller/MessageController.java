@@ -27,6 +27,7 @@ public class MessageController {
 
     // 특정 id를 받을 때 그에 해당하는 메시지가 떠야함
     // 한 사람의 폴더를 눌렀을때 그 사람이 받은 메시지가 다 뜨도록 하는 함수
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/show/{userId}")
     public ResponseEntity<List<Message>> getMessagesByUserId(@PathVariable Long userId) {
         List<Message> messages = messageService.listMessagesByUser(userId);
@@ -39,6 +40,7 @@ public class MessageController {
     }
 
     // 사용자가 message를 적었을 때 적은 정보와 id를 받아와서 저장하는 함수
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/write")
     public ResponseEntity<Message> writeMessage(@RequestBody Message message){
         Message writtenMessage = messageService.saveMessage(message);
