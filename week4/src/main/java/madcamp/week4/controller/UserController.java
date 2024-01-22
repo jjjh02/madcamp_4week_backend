@@ -1,5 +1,6 @@
 package madcamp.week4.controller;
 
+import madcamp.week4.dto.OrganizationJoinRequest;
 import madcamp.week4.model.User;
 import madcamp.week4.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ public class UserController {
     private UserService userService;
 
     // 로그인
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<?> logInUser(@RequestBody User user) throws LoginException {
         User loggedinUser = userService.loginUser(user.getUserName(), user.getPassword());
@@ -26,12 +26,16 @@ public class UserController {
     }
 
     // 회원가입
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/signup")
     public ResponseEntity<?> signUpUser(@RequestBody User user){
         User signupedUser = userService.signupUser(user);
         return ResponseEntity.ok(signupedUser);
     }
 
+    @PostMapping("/joinOrganization")
+    public ResponseEntity<User> joinOrganization(@RequestBody OrganizationJoinRequest joinRequest) {
+        User updatedUser = userService.joinOrganization(joinRequest.getUserId(), joinRequest.getOrganizationInviteNumber());
+        return ResponseEntity.ok(updatedUser);
+    }
 
 }

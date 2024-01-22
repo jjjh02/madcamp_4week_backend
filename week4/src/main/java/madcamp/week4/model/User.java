@@ -1,5 +1,6 @@
 package madcamp.week4.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,8 @@ public class User {
             joinColumns = @JoinColumn(name = "userId"), // Column for User
             inverseJoinColumns = @JoinColumn(name = "groupId") // Column for Organization
     )
+
+    @JsonBackReference
     private List<Organization> organizations;
 
     // 생성자

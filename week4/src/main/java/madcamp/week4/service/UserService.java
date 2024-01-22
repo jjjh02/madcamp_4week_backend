@@ -1,7 +1,9 @@
 package madcamp.week4.service;
 
 import madcamp.week4.exception.CustomException;
+import madcamp.week4.model.Organization;
 import madcamp.week4.model.User;
+import madcamp.week4.repository.OrganizationRepository;
 import madcamp.week4.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
     public User signupUser(User user) {
         Optional<User> existingUser = userRepository.findUserByUserName(user.getUserName());
@@ -39,6 +44,17 @@ public class UserService {
         }
 
         throw new LoginException("로그인 실패"); // 로그인 실패 시 예외를 던집니다.
+    }
+
+    public User joinOrganization(Long userId, String organizationInviteNumber) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Organization organization = organizationRepository.findByOrganizationInviteNumber(organizationInviteNumber)
+                .orElseThrow(() -> new RuntimeException("Organization not found"));
+
+        user.getOrganizations().add(organization);
+        return userRepository.save(user);
     }
 
 }
