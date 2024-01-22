@@ -57,7 +57,8 @@ public class MessageService {
                 message.getIsRead(),
                 message.getToId() != null ? message.getToId().getUserId() : null,
                 message.getFromId() != null ? message.getFromId().getUserId() : null,
-                message.getOrganization() != null ? message.getOrganization().getOrganizationId() : null
+                message.getOrganization() != null ? message.getOrganization().getOrganizationId() : null,
+                message.getOrganization() != null ? message.getOrganization().getOrganizationName() : null
         );
     }
 

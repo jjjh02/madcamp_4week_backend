@@ -38,5 +38,8 @@ public class OrganizationService {
                 .orElse(Collections.emptyList()); // 조직이 존재하지 않으면 빈 리스트 반환
     }
 
+    public Organization findByInviteNumber(String inviteNumber) {
+        return organizationRepository.findByOrganizationInviteNumber(inviteNumber).orElse(null);
+    }
 
 }
