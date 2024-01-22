@@ -4,6 +4,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.extern.slf4j.Slf4j;
 import madcamp.week4.dto.MessageDto;
+import madcamp.week4.dto.MessageResponseDto;
+import madcamp.week4.dto.UserIdRequest;
+import madcamp.week4.dto.UserOrganizationRequest;
 import madcamp.week4.model.Message;
 import madcamp.week4.model.User;
 import madcamp.week4.service.MessageService;
@@ -27,23 +30,32 @@ public class MessageController {
 
     // 특정 id를 받을 때 그에 해당하는 메시지가 떠야함
     // 한 사람의 폴더를 눌렀을때 그 사람이 받은 메시지가 다 뜨도록 하는 함수
-    @GetMapping("/show/{userId}")
-    public ResponseEntity<List<Message>> getMessagesByUserId(@PathVariable Long userId) {
-        List<Message> messages = messageService.listMessagesByUser(userId);
+    @PostMapping("/show")
+    public ResponseEntity<List<Message>> getMessagesByUserId(@RequestBody UserIdRequest request) {
+        List<Message> messages = messageService.listMessagesByUser(request.getUserId());
 
         if (messages.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 해당 사용자의 메시지가 없음을 나타내는 204 No Content 반환
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(messages); // 해당 사용자의 메시지를 반환
+            return ResponseEntity.ok(messages);
         }
     }
 
     // 사용자가 message를 적었을 때 적은 정보와 id를 받아와서 저장하는 함수
     @PostMapping("/write")
-    public ResponseEntity<Message> writeMessage(@RequestBody Message message){
-        Message writtenMessage = messageService.saveMessage(message);
-        return ResponseEntity.status(HttpStatus.CREATED).body(writtenMessage);
+    public ResponseEntity<MessageResponseDto> writeMessage(@RequestBody MessageDto messageDto) {
+        Message message = messageService.createAndSaveMessage(messageDto);
+        MessageResponseDto responseDto = messageService.createMessageResponseDto(message);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-
+    // 해당 user의 특정 group에 대한 메시지 리스트
+    @PostMapping("/group")
+    public ResponseEntity<List<Message>> getMessagesByUserAndOrganization(
+            @RequestBody UserOrganizationRequest request) {
+        List<Message> messages = messageService.getMessagesByUserAndOrganization(
+                request.getUserId(),
+                request.getOrganizationId());
+        return ResponseEntity.ok(messages);
+    }
 }

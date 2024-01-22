@@ -1,5 +1,6 @@
 package madcamp.week4.service;
 
+import madcamp.week4.dto.OrganizationResponseDto;
 import madcamp.week4.exception.CustomException;
 import madcamp.week4.model.Organization;
 import madcamp.week4.model.User;
@@ -9,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -55,6 +59,14 @@ public class UserService {
 
         user.getOrganizations().add(organization);
         return userRepository.save(user);
+    }
+
+    public List<OrganizationResponseDto> getOrganizationsByUserId(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(u -> u.getOrganizations().stream()
+                        .map(org -> new OrganizationResponseDto(org.getOrganizationId(), org.getOrganizationName()))
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
 }

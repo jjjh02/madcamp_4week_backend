@@ -28,10 +28,25 @@ public class Message {
     @JoinColumn(name = "from_id", referencedColumnName = "userId")
     private User fromId;
 
+    @ManyToOne
+    @JoinColumn(name = "organization_id", referencedColumnName = "organizationId")
+    private Organization organization;
+
     public Message() {
 
     }
 
+    public void createMessage(String fromNickName, String messageDescription, LocalDateTime messageTime, Boolean isRead){
+        this.fromNickName = fromNickName;
+        this.messageDescription = messageDescription;
+        this.messageTime = messageTime;
+        this.isRead = isRead;
+    }
 
+    public void setUsersAndOrganization(User toUser, User fromUser, Organization organization) {
+        this.toId = toUser;
+        this.fromId = fromUser;
+        this.organization = organization;
+    }
 
 }

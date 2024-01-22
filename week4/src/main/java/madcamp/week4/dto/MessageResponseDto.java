@@ -1,11 +1,9 @@
 package madcamp.week4.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Getter
-public class MessageDto {
+public class MessageResponseDto {
+    private Long messageId;
     private String fromNickName;
     private String messageDescription;
     private LocalDateTime messageTime;
@@ -14,11 +12,8 @@ public class MessageDto {
     private Long fromId;
     private Long organizationId;
 
-    public MessageDto(){
-
-    }
-
-    public MessageDto(String fromNickName, String messageDescription, LocalDateTime messageTime, Boolean isRead, Long toId, Long fromId, Long organizationId) {
+    public MessageResponseDto(Long messageId, String fromNickName, String messageDescription, LocalDateTime messageTime, Boolean isRead, Long toId, Long fromId, Long organizationId) {
+        this.messageId = messageId;
         this.fromNickName = fromNickName;
         this.messageDescription = messageDescription;
         this.messageTime = messageTime;
@@ -27,4 +22,9 @@ public class MessageDto {
         this.fromId = fromId;
         this.organizationId = organizationId;
     }
+
+    // Getters and Setters
+    // ...
+
+    // messageId를 포함한 다른 필드의 getter 및 setter 메서드들
 }
