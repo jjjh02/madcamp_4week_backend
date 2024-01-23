@@ -68,7 +68,7 @@ public class UserService {
     public List<OrganizationResponseDto> getOrganizationsByUserId(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.map(u -> u.getOrganizations().stream()
-                        .map(org -> new OrganizationResponseDto(org.getOrganizationId(), org.getOrganizationName()))
+                        .map(org -> new OrganizationResponseDto(org.getOrganizationId(), org.getOrganizationName(), org.getOrganizationInviteNumber()))
                         .collect(Collectors.toList()))
                 .orElse(Collections.emptyList());
     }
