@@ -57,6 +57,10 @@ public class UserService {
         Organization organization = organizationRepository.findByOrganizationInviteNumber(organizationInviteNumber)
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
 
+        if (user.getOrganizations().contains(organization)) {
+            throw new IllegalStateException("User is already a member of this organization");
+        }
+
         user.getOrganizations().add(organization);
         return userRepository.save(user);
     }
