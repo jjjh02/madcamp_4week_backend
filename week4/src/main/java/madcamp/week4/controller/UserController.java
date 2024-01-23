@@ -16,6 +16,7 @@ import javax.security.auth.login.LoginException;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/user")
 public class UserController {
 

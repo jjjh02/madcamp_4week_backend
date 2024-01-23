@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/organization")
 public class OrganizationController {
     @Autowired
