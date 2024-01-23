@@ -1,5 +1,6 @@
 package madcamp.week4.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import madcamp.week4.dto.MessageDto;
 import madcamp.week4.dto.MessageResponseDto;
 import madcamp.week4.model.Message;
@@ -45,6 +46,14 @@ public class MessageService {
         message.createMessage(messageDto.getFromNickName(), messageDto.getMessageDescription(), messageDto.getMessageTime(), messageDto.getIsRead());
         message.setUsersAndOrganization(toUser, fromUser, organization);
 
+        return messageRepository.save(message);
+    }
+
+    public Message readMessage(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new EntityNotFoundException("Message not found"));
+
+        message.changeRead(true);
         return messageRepository.save(message);
     }
 

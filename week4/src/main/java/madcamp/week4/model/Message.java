@@ -49,4 +49,7 @@ public class Message {
         this.organization = organization;
     }
 
+    public void changeRead(Boolean read) {
+        isRead = read;
+    }
 }

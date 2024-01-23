@@ -65,6 +65,12 @@ public class MessageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(writtenMessage);
     }
 
+    @PutMapping("/read")
+    public ResponseEntity<Message> readMessage(@RequestBody MessageIdRequest messageIdRequest) {
+        Message updatedMessage = messageService.readMessage(messageIdRequest.getMessageId());
+        return ResponseEntity.ok(updatedMessage);
+    }
+
     // 해당 user의 특정 group에 대한 메시지 리스트
     @PostMapping("/group")
     public ResponseEntity<List<MessageResponseDto>> getMessagesByUserAndOrganization(
