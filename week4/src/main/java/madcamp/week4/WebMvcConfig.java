@@ -11,7 +11,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://timeforletter.s3-website.ap-northeast-2.amazonaws.com") // React 애플리케이션 URL
+                .allowedOrigins("http://localhost:3000") // React 애플리케이션 URL
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
