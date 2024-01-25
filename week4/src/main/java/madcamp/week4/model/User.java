@@ -36,5 +36,8 @@ public class User {
 
     }
 
-
+    public void removeOrganization(Organization organization) {
+        this.organizations.remove(organization);
+        organization.getUsers().remove(this);
+    }
 }

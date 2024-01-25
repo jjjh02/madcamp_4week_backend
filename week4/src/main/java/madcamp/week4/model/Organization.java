@@ -37,4 +37,9 @@ public class Organization {
         this.organizationName = organizationName;
     }
 
+    public void removeUser(User user) {
+        this.users.remove(user);
+        user.getOrganizations().remove(this);
+    }
+
 }
