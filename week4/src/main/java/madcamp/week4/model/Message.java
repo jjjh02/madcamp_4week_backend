@@ -20,11 +20,11 @@ public class Message {
 
     private Boolean isRead;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "to_id", referencedColumnName = "userId")
     private User toId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "from_id", referencedColumnName = "userId")
     private User fromId;
 
