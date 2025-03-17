@@ -1,5 +1,6 @@
 package madcamp.week4.service;
 
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.model.Organization;
 import madcamp.week4.model.User;
 import madcamp.week4.repository.OrganizationRepository;
@@ -9,13 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserOrganizationService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
 
     public void removeUserFromOrganization(Long userId, Long organizationId) {
         User user = userRepository.findById(userId)

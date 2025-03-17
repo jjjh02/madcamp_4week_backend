@@ -1,5 +1,6 @@
 package madcamp.week4.service;
 
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.dto.OrganizationResponseDto;
 import madcamp.week4.exception.CustomException;
 import madcamp.week4.model.Organization;
@@ -16,13 +17,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
+    private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
 
     public User signupUser(User user) {
         Optional<User> existingUser = userRepository.findUserByUserName(user.getUserName());
