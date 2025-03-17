@@ -1,6 +1,7 @@
 package madcamp.week4.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.dto.MessageDto;
 import madcamp.week4.dto.MessageResponseDto;
 import madcamp.week4.model.Message;
@@ -16,14 +17,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private OrganizationRepository organizationRepository;
+    private final MessageRepository messageRepository;
+    private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);

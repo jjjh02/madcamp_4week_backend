@@ -1,6 +1,7 @@
 package madcamp.week4.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.model.Organization;
 import madcamp.week4.model.User;
 import madcamp.week4.repository.OrganizationRepository;
@@ -13,14 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrganizationService {
 
-
-
-
-
-    @Autowired
-    private OrganizationRepository organizationRepository;
+    private final OrganizationRepository organizationRepository;
 
     // 방생성 (초대코드 받아오기)
     public Organization createOrganization(Organization organization){return organizationRepository.save(organization);}
