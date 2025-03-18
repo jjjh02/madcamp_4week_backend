@@ -1,12 +1,15 @@
 package madcamp.week4.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +34,6 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "organization_id", referencedColumnName = "organizationId")
     private Organization organization;
-
-    public Message() {
-
-    }
 
     public void createMessage(String fromNickName, String messageDescription, LocalDateTime messageTime, Boolean isRead){
         this.fromNickName = fromNickName;

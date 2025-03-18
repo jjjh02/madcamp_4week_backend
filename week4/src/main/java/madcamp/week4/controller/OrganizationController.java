@@ -30,14 +30,14 @@ public class OrganizationController {
     }
 
     // 특정 그룹을 눌렀을때 해당하는 사람들의 리스트의 파일이 모두 떠야함
-    @PostMapping("/users")
-    public ResponseEntity<List<UserResponseDto>> getUsersByOrganization(@RequestBody OrganizationIdRequest request) {
-        List<User> users = organizationService.getUsersByOrganizationId(request.getOrganizationId());
-        List<UserResponseDto> userDtos = users.stream()
-                .map(user -> new UserResponseDto(user.getUserId(), user.getName()))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(userDtos);
-    }
+//    @PostMapping("/users")
+//    public ResponseEntity<List<UserResponseDto>> getUsersByOrganization(@RequestBody OrganizationIdRequest request) {
+//        List<User> users = organizationService.getUsersByOrganizationId(request.getOrganizationId());
+//        List<UserResponseDto> userDtos = users.stream()
+//                .map(user -> new UserResponseDto(user.getUserId(), user.getName()))
+//                .collect(Collectors.toList());
+//        return ResponseEntity.ok(userDtos);
+//    }
 
 
     //    public ResponseEntity<List<User>> getUsersByOrganization(@RequestBody OrganizationIdRequest request) {

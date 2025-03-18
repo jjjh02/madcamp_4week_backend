@@ -29,11 +29,11 @@ public class OrganizationService {
     }
 
     // 특정 그룹을 눌렀을때 해당하는 사람들의 리스트의 파일이 모두 떠야함
-    public List<User> getUsersByOrganizationId(Long organizationId) {
-        return organizationRepository.findById(organizationId)
-                .map(Organization::getUsers)
-                .orElse(Collections.emptyList()); // 조직이 존재하지 않으면 빈 리스트 반환
-    }
+//    public List<User> getUsersByOrganizationId(Long organizationId) {
+//        return organizationRepository.findById(organizationId)
+//                .map(Organization::getUsers)
+//                .orElse(Collections.emptyList()); // 조직이 존재하지 않으면 빈 리스트 반환
+//    }
 
     public Organization findByInviteNumber(String inviteNumber) {
         return organizationRepository.findByOrganizationInviteNumber(inviteNumber).orElse(null);
