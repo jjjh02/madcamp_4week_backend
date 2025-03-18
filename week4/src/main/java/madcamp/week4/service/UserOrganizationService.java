@@ -22,8 +22,8 @@ public class UserOrganizationService {
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
 
-        user.removeOrganization(organization);
-        organization.removeUser(user);
+//        user.removeOrganization(organization);
+//        organization.removeUser(user);
 
         userRepository.save(user);
         organizationRepository.save(organization);

@@ -38,17 +38,17 @@ public class UserController {
     }
 
     // organization에 들어가기
-    @PostMapping("/joinOrganization")
-    public ResponseEntity<User> joinOrganization(@RequestBody OrganizationJoinRequest joinRequest) {
-        User updatedUser = userService.joinOrganization(joinRequest.getUserId(), joinRequest.getOrganizationInviteNumber());
-        return ResponseEntity.ok(updatedUser);
-    }
-
-    // user가 들어가있는 모든 그룹 보여주기
-    @PostMapping("/organizations")
-    public List<OrganizationResponseDto> getUserOrganizations(@RequestBody UserIdRequest request) {
-        return userService.getOrganizationsByUserId(request.getUserId());
-    }
+//    @PostMapping("/joinOrganization")
+//    public ResponseEntity<User> joinOrganization(@RequestBody OrganizationJoinRequest joinRequest) {
+//        User updatedUser = userService.joinOrganization(joinRequest.getUserId(), joinRequest.getOrganizationInviteNumber());
+//        return ResponseEntity.ok(updatedUser);
+//    }
+//
+//    // user가 들어가있는 모든 그룹 보여주기
+//    @PostMapping("/organizations")
+//    public List<OrganizationResponseDto> getUserOrganizations(@RequestBody UserIdRequest request) {
+//        return userService.getOrganizationsByUserId(request.getUserId());
+//    }
 //    public ResponseEntity<List<Organization>> getUserOrganizations(@RequestBody UserIdRequest request) {
 //        List<Organization> organizations = userService.getUserOrganizations(request.getUserId());
 //        return ResponseEntity.ok(organizations);
