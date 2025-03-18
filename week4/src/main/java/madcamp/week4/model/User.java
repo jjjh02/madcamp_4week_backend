@@ -2,8 +2,7 @@ package madcamp.week4.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.List;
@@ -11,6 +10,9 @@ import java.util.List;
 // default
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 public class User {
     @Id // pk
@@ -23,21 +25,5 @@ public class User {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_organization", // Name of the join table
-            joinColumns = @JoinColumn(name = "userId"), // Column for User
-            inverseJoinColumns = @JoinColumn(name = "groupId") // Column for Organization
-    )
-    private List<Organization> organizations;
 
-    // 생성자
-    public User() {
-
-    }
-
-    public void removeOrganization(Organization organization) {
-        this.organizations.remove(organization);
-        organization.getUsers().remove(this);
-    }
 }
