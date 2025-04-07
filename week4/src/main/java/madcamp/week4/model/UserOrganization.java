@@ -21,5 +21,9 @@ public class UserOrganization {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 
 }
+
