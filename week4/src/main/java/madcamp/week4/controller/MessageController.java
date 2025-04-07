@@ -46,8 +46,8 @@ public class MessageController {
                         message.getMessageDescription(),
                         message.getMessageTime(),
                         message.getIsRead(),
-                        message.getToId().getUserId(),
-                        message.getFromId().getUserId(),
+                        message.getReceiver().getUserId(),
+                        message.getSender().getUserId(),
                         message.getOrganization().getOrganizationId(),
                         message.getOrganization().getOrganizationName()
                 );
@@ -91,8 +91,8 @@ public class MessageController {
                         message.getMessageDescription(),
                         message.getMessageTime(),
                         message.getIsRead(),
-                        message.getToId().getUserId(),
-                        message.getFromId().getUserId(),
+                        message.getReceiver().getUserId(),
+                        message.getSender().getUserId(),
                         message.getOrganization().getOrganizationId(),
                         message.getOrganization().getOrganizationName()
                 );
