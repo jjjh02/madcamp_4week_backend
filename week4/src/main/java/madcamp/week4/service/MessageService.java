@@ -24,35 +24,41 @@ public class MessageService {
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
 
-    public Message saveMessage(Message message) {
-        return messageRepository.save(message);
-    }
-
+    // message 조회 (by user)
     public List<Message> listMessagesByUser(Long userId){
-        return messageRepository.findByToIdUserId(userId);
+        return messageRepository.findByReceiverUserId(userId);
     }
 
+    // message 조회 (by user, organization)
     public List<Message> getMessagesByUserAndOrganization(Long userId, Long organizationId) {
-        return messageRepository.findByToIdUserIdAndOrganizationOrganizationId(userId, organizationId);
+        return messageRepository.findByReceiverUserIdAndOrganizationOrganizationId(userId, organizationId);
     }
 
+    // message 생성
     public Message createAndSaveMessage(MessageDto messageDto) {
-        User toUser = userRepository.findById(messageDto.getToId()).orElse(null);
-        User fromUser = userRepository.findById(messageDto.getFromId()).orElse(null);
+        User receiver = userRepository.findById(messageDto.getReceiver()).orElse(null);
+        User sender = userRepository.findById(messageDto.getSender()).orElse(null);
         Organization organization = organizationRepository.findById(messageDto.getOrganizationId()).orElse(null);
 
-        Message message = new Message();
-        message.createMessage(messageDto.getFromNickName(), messageDto.getMessageDescription(), messageDto.getMessageTime(), messageDto.getIsRead());
-        message.setUsersAndOrganization(toUser, fromUser, organization);
+        Message message = Message.builder()
+                .fromNickName(messageDto.getFromNickName())
+                .messageDescription(messageDto.getMessageDescription())
+                .messageTime(messageDto.getMessageTime())
+                .isRead(messageDto.getIsRead())
+                .receiver(receiver)
+                .sender(sender)
+                .organization(organization)
+                .build();
 
         return messageRepository.save(message);
     }
 
+    // message 읽음 처리
     public Message readMessage(Long messageId) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new EntityNotFoundException("Message not found"));
 
-        message.changeRead(true);
+        message.markAsRead(true);
         return messageRepository.save(message);
     }
 
@@ -63,8 +69,8 @@ public class MessageService {
                 message.getMessageDescription(),
                 message.getMessageTime(),
                 message.getIsRead(),
-                message.getToId() != null ? message.getToId().getUserId() : null,
-                message.getFromId() != null ? message.getFromId().getUserId() : null,
+                message.getReceiver() != null ? message.getReceiver().getUserId() : null,
+                message.getSender() != null ? message.getSender().getUserId() : null,
                 message.getOrganization() != null ? message.getOrganization().getOrganizationId() : null,
                 message.getOrganization() != null ? message.getOrganization().getOrganizationName() : null
         );
