@@ -10,8 +10,8 @@ public class MessageDto {
     private String messageDescription;
     private LocalDateTime messageTime;
     private Boolean isRead;
-    private Long toId;
-    private Long fromId;
+    private Long receiver;
+    private Long sender;
     private Long organizationId;
 
     public MessageDto(){
@@ -23,8 +23,8 @@ public class MessageDto {
         this.messageDescription = messageDescription;
         this.messageTime = messageTime;
         this.isRead = isRead;
-        this.toId = toId;
-        this.fromId = fromId;
+        this.receiver = toId;
+        this.sender = fromId;
         this.organizationId = organizationId;
     }
 }

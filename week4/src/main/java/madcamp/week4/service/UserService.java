@@ -23,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
 
+    // 회원가입
     public User signupUser(User user) {
         Optional<User> existingUser = userRepository.findUserByUserName(user.getUserName());
         if (existingUser.isPresent()) {
@@ -34,6 +35,7 @@ public class UserService {
     }
 
 
+    // 로그인
     public User loginUser(String userName, String password) throws LoginException {
         Optional<User> userOptional = userRepository.findUserByUserName(userName);
 
@@ -49,28 +51,9 @@ public class UserService {
         throw new LoginException("로그인 실패"); // 로그인 실패 시 예외를 던집니다.
     }
 
-//    public User joinOrganization(Long userId, String organizationInviteNumber) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Organization organization = organizationRepository.findByOrganizationInviteNumber(organizationInviteNumber)
-//                .orElseThrow(() -> new RuntimeException("Organization not found"));
-//
-//        if (user.getOrganizations().contains(organization)) {
-//            throw new IllegalStateException("User is already a member of this organization");
-//        }
-//
-//        user.getOrganizations().add(organization);
-//        return userRepository.save(user);
-//    }
-//
-//    public List<OrganizationResponseDto> getOrganizationsByUserId(Long userId) {
-//        Optional<User> user = userRepository.findById(userId);
-//        return user.map(u -> u.getOrganizations().stream()
-//                        .map(org -> new OrganizationResponseDto(org.getOrganizationId(), org.getOrganizationName(), org.getOrganizationInviteNumber()))
-//                        .collect(Collectors.toList()))
-//                .orElse(Collections.emptyList());
-//    }
+    //
+
 
 
 }
+

@@ -21,13 +21,13 @@ public class OrganizationController {
     @Autowired
     OrganizationService organizationService;
     // 방생성 (초대코드 받아오기)
-    @PostMapping("/create")
-    public ResponseEntity<Organization> createOrganization(@RequestBody OrganizationCreateRequest request) {
-        Organization newOrganization = new Organization();
-        newOrganization.makeOrganization(request.getOrganizationName());
-        Organization createdOrganization = organizationService.createOrganization(newOrganization);
-        return ResponseEntity.ok(createdOrganization);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<Organization> createOrganization(@RequestBody OrganizationCreateRequest request) {
+//        Organization newOrganization = new Organization();
+//        newOrganization.makeOrganization(request.getOrganizationName());
+//        Organization createdOrganization = organizationService.createOrganization(newOrganization);
+//        return ResponseEntity.ok(createdOrganization);
+//    }
 
     // 특정 그룹을 눌렀을때 해당하는 사람들의 리스트의 파일이 모두 떠야함
 //    @PostMapping("/users")
