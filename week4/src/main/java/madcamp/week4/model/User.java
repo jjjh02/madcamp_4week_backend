@@ -25,5 +25,9 @@ public class User {
 
     private String name;
 
+    private String refreshToken;
 
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
