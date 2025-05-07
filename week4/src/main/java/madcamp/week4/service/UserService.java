@@ -1,57 +1,70 @@
 package madcamp.week4.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import madcamp.week4.dto.OrganizationResponseDto;
-import madcamp.week4.exception.CustomException;
-import madcamp.week4.model.Organization;
+import madcamp.week4.dto.UserRequestDto;
+import madcamp.week4.jwt.JwtProvider;
 import madcamp.week4.model.User;
-import madcamp.week4.repository.OrganizationRepository;
 import madcamp.week4.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.security.auth.login.LoginException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final OrganizationRepository organizationRepository;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
+
+    // token에서 유저 아이디 추출
+    public Long getUserIdFromToken(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization").substring(7); // "Bearer "를 제외한 토큰
+        return jwtProvider.extractUserId(accessToken).orElseThrow(() -> new RuntimeException("토큰에서 유저 아이디를 찾을 수 없습니다."));
+    }
 
     // 회원가입
-    public User signupUser(User user) {
-        Optional<User> existingUser = userRepository.findUserByUserName(user.getUserName());
-        if (existingUser.isPresent()) {
-            // 동일한 userName을 가진 사용자가 이미 존재하는 경우
-            // 여기에 적절한 예외 처리나 다른 로직을 구현합니다.
-            throw new CustomException("User with username " + user.getUserName() + " already exists.");
+    public void signUp(UserRequestDto userRequestDto, HttpServletResponse response) {
+        // 아이디 중복 체크
+        if (userRepository.findUserByUserName(userRequestDto.getUserName()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
-        return userRepository.save(user);
-    }
 
+        // 저장
+        User user = User.builder()
+                .userName(userRequestDto.getUserName())
+                .password(passwordEncoder.encode(userRequestDto.getPassword())) // 비밀번호 암호화
+                .name(userRequestDto.getName())
+                .build();
+
+        userRepository.save(user);
+
+        // 가입하자마자 로그인 토큰 발급
+        String accessToken = jwtProvider.createAccessToken(user.getUserName(), user.getUserId());
+        String refreshToken = jwtProvider.createRefreshToken();
+        jwtProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+
+        user.updateRefreshToken(refreshToken);
+        userRepository.save(user);
+    }
 
     // 로그인
-    public User loginUser(String userName, String password) throws LoginException {
-        Optional<User> userOptional = userRepository.findUserByUserName(userName);
+    public void login(UserRequestDto userRequestDto, HttpServletResponse response) {
+        User user = userRepository.findUserByUserName(userRequestDto.getUserName())
+                .orElseThrow(() -> new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다."));
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // 사용자가 입력한 비밀번호와 저장된 비밀번호를 비교
-            if (password.equals(user.getPassword())) {
-                return user; // 로그인 성공
-            }
+        if (!passwordEncoder.matches(userRequestDto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        throw new LoginException("로그인 실패"); // 로그인 실패 시 예외를 던집니다.
-    }
+        String accessToken = jwtProvider.createAccessToken(user.getUserName(), user.getUserId());
+        String refreshToken = jwtProvider.createRefreshToken();
+        jwtProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
-    //
+        user.updateRefreshToken(refreshToken);
+        userRepository.save(user);
+    }
 
 
 
