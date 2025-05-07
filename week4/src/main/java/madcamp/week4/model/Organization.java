@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
+import madcamp.week4.dto.OrganizationUpdateRequestDto;
 
 @Entity
 @Getter
@@ -19,7 +20,5 @@ public class Organization {
 
     private String organizationName;
 
-    private String organizationInviteNumber;
-
-    public void changeOrganizationName(String newOrganizationName) { this.organizationName = newOrganizationName; }
+    public void changeOrganizationName(OrganizationUpdateRequestDto organizationUpdateRequestDto) { this.organizationName = organizationUpdateRequestDto.getNewOrganizationName(); }
 }

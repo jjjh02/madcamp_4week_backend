@@ -24,6 +24,14 @@ public class UserOrganization {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public boolean isMember() {
+        return this.role == Role.MEMBER;
+    }
+
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
+    }
+
 
 }
 

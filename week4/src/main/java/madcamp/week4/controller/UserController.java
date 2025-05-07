@@ -1,5 +1,6 @@
 package madcamp.week4.controller;
 
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.dto.OrganizationJoinRequest;
 import madcamp.week4.dto.OrganizationResponseDto;
 import madcamp.week4.dto.UserIdRequest;
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.security.auth.login.LoginException;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     // 로그인
     @PostMapping("/login")

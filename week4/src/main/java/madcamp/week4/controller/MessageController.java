@@ -2,6 +2,7 @@ package madcamp.week4.controller;
 
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import madcamp.week4.dto.*;
 import madcamp.week4.model.Message;
@@ -19,14 +20,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping("/api/messages")
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
 
     // 특정 id를 받을 때 그에 해당하는 메시지가 떠야함
     // 한 사람의 폴더를 눌렀을때 그 사람이 받은 메시지가 다 뜨도록 하는 함수
