@@ -22,6 +22,7 @@ public class OrganizationService {
     private final UserRepository userRepository;
     private final OrganizationRepository organizationRepository;
     private final UserOrganizationRepository userOrganizationRepository;
+    private final InviteCodeService inviteCodeService;
 
     public static String generateInviteCode() {
         return UUID.randomUUID().toString()
@@ -34,8 +35,7 @@ public class OrganizationService {
     public void createOrganization(Long userId, String organizationName) {
         User user = userRepository.findById(userId).orElse(null);
         // 그룹 초대코드 생성 -> redis 사용 고민
-        String organizationInviteNumber = generateInviteCode();
-        Organization newOrganization = Organization.builder().organizationName(organizationName).organizationInviteNumber(organizationInviteNumber).build();
+        Organization newOrganization = Organization.builder().organizationName(organizationName).build();
         // ADMIN 설정
         UserOrganization newUserOrganization = UserOrganization.builder().user(user).organization(newOrganization).role(Role.ADMIN).build();
 
@@ -47,25 +47,39 @@ public class OrganizationService {
     public void leaveOrganization(Long userId, Long organizationId) {
         UserOrganization userOrganization = userOrganizationRepository
                 .findByUserUserIdAndOrganizationOrganizationId(userId, organizationId).orElseThrow(() -> new IllegalArgumentException("해당 조직에 속한 사용자를 찾을 수 없습니다."));
-        if(userOrganization.getRole() == Role.ADMIN) {
+        if(userOrganization.isAdmin()) {
             throw new IllegalStateException("ADMIN은 탈퇴할 수 없습니다. 권한을 위임한 후 탈퇴하세요.");
         }
         userOrganizationRepository.delete(userOrganization);
     }
 
     // 그룹 입장
-    public void enterOrganization(Long userId, String organizationInviteNumber) {
+    public void enterOrganization(Long userId, String inviteCode) {
+        Long organizationId = inviteCodeService.getOrganizationIdByInviteCode(inviteCode);
+        if (organizationId == null) {
+            throw new IllegalArgumentException("유효하지 않거나 만료된 초대코드입니다.");
+        }
+
         User user = userRepository.findById(userId).orElse(null);
-        Organization organization = organizationRepository.findByOrganizationInviteNumber(organizationInviteNumber).orElse(null);
-        UserOrganization newUserOrganization = UserOrganization.builder().user(user).organization(organization).role(Role.MEMBER).build();
-        userOrganizationRepository.save(newUserOrganization);
+        Organization organization = organizationRepository.findById(organizationId).orElse(null);
+
+        UserOrganization userOrganization = UserOrganization.builder()
+                .user(user)
+                .organization(organization)
+                .role(Role.MEMBER)
+                .build();
+
+        userOrganizationRepository.save(userOrganization);
+
+        // 일회성 사용이라면 코드 삭제
+        inviteCodeService.removeInviteCode(inviteCode);
     }
 
     // 그룹 삭제
     public void deleteOrganization(Long userId, Long organizationId) {
         UserOrganization userOrganization = userOrganizationRepository
                 .findByUserUserIdAndOrganizationOrganizationId(userId, organizationId).orElseThrow(() -> new IllegalArgumentException("해당 조직에 속한 사용자를 찾을 수 없습니다."));
-        if(userOrganization.getRole() == Role.MEMBER) {
+        if(userOrganization.isMember()) {
             throw new IllegalStateException("MEMBER는 그룹을 삭제할 수 없습니다.");
         }
         organizationRepository.deleteById(organizationId);
@@ -75,14 +89,15 @@ public class OrganizationService {
     public void updateOrganization(Long userId, OrganizationUpdateRequestDto organizationUpdateRequestDto) {
         UserOrganization userOrganization = userOrganizationRepository
                 .findByUserUserIdAndOrganizationOrganizationId(userId, organizationUpdateRequestDto.getOrganizationId()).orElseThrow(() -> new IllegalArgumentException("해당 조직에 속한 사용자를 찾을 수 없습니다."));
-        if(userOrganization.getRole() == Role.MEMBER) {
+        if(userOrganization.isMember()) {
             throw new IllegalStateException("MEMBER는 그룹을 수정할 수 없습니다.");
         }
         Organization organization = userOrganization.getOrganization();
-        organization.changeOrganizationName(organizationUpdateRequestDto.getNewOrganizationName());
+        organization.changeOrganizationName(organizationUpdateRequestDto);
     }
 
     // 그룹 조회
+
 
     // 그룹 참여자 조회
 
