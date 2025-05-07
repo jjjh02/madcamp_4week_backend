@@ -1,10 +1,12 @@
 package madcamp.week4.controller;
 
+import lombok.RequiredArgsConstructor;
 import madcamp.week4.dto.OrganizationCreateRequest;
 import madcamp.week4.dto.OrganizationIdRequest;
 import madcamp.week4.dto.UserResponseDto;
 import madcamp.week4.model.Organization;
 import madcamp.week4.model.User;
+import madcamp.week4.service.InviteCodeService;
 import madcamp.week4.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +16,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin
-@RequestMapping("/api/organization")
+@RequestMapping("/api/organizations")
 public class OrganizationController {
-    @Autowired
-    OrganizationService organizationService;
+
+    private final OrganizationService organizationService;
+    private final InviteCodeService inviteCodeService;
+
+    // 초대코드 생성하기
+    @PostMapping("/{organizationId}/invite-code")
+    public ResponseEntity<String> generateInviteCode(@PathVariable Long organizationId) {
+        String code = inviteCodeService.generateAndStoreInviteCode(organizationId);
+        return ResponseEntity.ok(code);
+    }
     // 방생성 (초대코드 받아오기)
 //    @PostMapping("/create")
 //    public ResponseEntity<Organization> createOrganization(@RequestBody OrganizationCreateRequest request) {
