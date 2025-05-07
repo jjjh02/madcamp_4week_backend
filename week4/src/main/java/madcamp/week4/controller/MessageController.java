@@ -1,22 +1,14 @@
 package madcamp.week4.controller;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import madcamp.week4.dto.*;
 import madcamp.week4.model.Message;
-import madcamp.week4.model.Organization;
-import madcamp.week4.model.User;
 import madcamp.week4.service.MessageService;
-import madcamp.week4.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,19 +1,10 @@
 package madcamp.week4.controller;
 
 import lombok.RequiredArgsConstructor;
-import madcamp.week4.dto.OrganizationCreateRequest;
-import madcamp.week4.dto.OrganizationIdRequest;
-import madcamp.week4.dto.UserResponseDto;
-import madcamp.week4.model.Organization;
-import madcamp.week4.model.User;
 import madcamp.week4.service.InviteCodeService;
 import madcamp.week4.service.OrganizationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
