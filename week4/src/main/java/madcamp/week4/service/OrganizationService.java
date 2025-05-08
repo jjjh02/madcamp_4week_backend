@@ -1,7 +1,9 @@
 package madcamp.week4.service;
 
 import lombok.RequiredArgsConstructor;
+import madcamp.week4.dto.OrganizationResponseDto;
 import madcamp.week4.dto.OrganizationUpdateRequestDto;
+import madcamp.week4.dto.UserResponseDto;
 import madcamp.week4.model.Organization;
 import madcamp.week4.model.Role;
 import madcamp.week4.model.User;
@@ -12,6 +14,7 @@ import madcamp.week4.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -96,12 +99,50 @@ public class OrganizationService {
         organization.changeOrganizationName(organizationUpdateRequestDto);
     }
 
-    // 그룹 조회
+    // 특정 그룹 조회
+    public OrganizationResponseDto getOrganizationById(Long userId, Long organizationId) {
+        UserOrganization userOrganization = userOrganizationRepository
+                .findByUserUserIdAndOrganizationOrganizationId(userId, organizationId).orElseThrow(() -> new IllegalArgumentException("해당 조직에 속한 사용자를 찾을 수 없습니다."));
+        Organization organization = userOrganization.getOrganization();
+        return toOranizationReponseDto(organization);
+    }
 
+    // 그룹 조회
+    public List<OrganizationResponseDto> getOrganizationsByUserId(Long userId) {
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findByUserUserId(userId).orElseThrow(() -> new IllegalArgumentException("해당 사용자가 속한 조직을 찾을 수 없습니다."));
+        List<Organization> organizations = userOrganizations.stream()
+                .map(UserOrganization::getOrganization)
+                .toList();
+        return organizations.stream()
+                .map(this::toOranizationReponseDto)
+                .toList();
+    }
 
     // 그룹 참여자 조회
+    public List<UserResponseDto> getUsersByOrganizationId(Long organizationId) {
+        List<UserOrganization> userOrganizations = userOrganizationRepository.findByUserUserId(organizationId).orElseThrow(() -> new IllegalArgumentException("해당 조직에 속한 사용자를 찾을 수 없습니다."));
+        List<User> users = userOrganizations.stream()
+                .map(UserOrganization::getUser)
+                .toList();
+        return users.stream()
+                .map(this::toUserResponseDto)
+                .toList();
+    }
 
+    private OrganizationResponseDto toOranizationReponseDto(Organization organization) {
+        return new OrganizationResponseDto(
+                organization.getOrganizationId(),
+                organization.getOrganizationName()
+        );
+    }
 
+    private UserResponseDto toUserResponseDto(User user) {
+        return new UserResponseDto(
+                user.getUserId(),
+                user.getUserName(),
+                user.getName()
+        );
+    }
 
 }
 
