@@ -12,14 +12,14 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class InviteCodeService {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
 
     private static final String INVITE_PREFIX = "invite:";
 
     @PostConstruct // Spring이 Bean을 생성한 직후에 자동으로 실행되는 초기화 메서드
     public void testRedisConnection() {
-        redisTemplate.opsForValue().set("ping", "pong");
-        String result = redisTemplate.opsForValue().get("ping");
+        stringRedisTemplate.opsForValue().set("ping", "pong");
+        String result = stringRedisTemplate.opsForValue().get("ping");
         System.out.println("Redis 연결 테스트 결과: " + result);
     }
 
@@ -27,20 +27,20 @@ public class InviteCodeService {
     public String generateAndStoreInviteCode(Long organizationId) {
         String inviteCode = UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
         String key = INVITE_PREFIX + inviteCode;
-        redisTemplate.opsForValue().set(key, String.valueOf(organizationId), 10, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(organizationId), 10, TimeUnit.MINUTES);
         return inviteCode;
     }
 
     // 초대코드로 조직 ID 조회
     public Long getOrganizationIdByInviteCode(String inviteCode) {
         String key = INVITE_PREFIX + inviteCode;
-        String organizationId = redisTemplate.opsForValue().get(key);
+        String organizationId = stringRedisTemplate.opsForValue().get(key);
         return organizationId != null ? Long.parseLong(organizationId) : null;
     }
 
     // 초대코드 사용 후 삭제
     public void removeInviteCode(String inviteCode) {
         String key = INVITE_PREFIX + inviteCode;
-        redisTemplate.delete(key);
+        stringRedisTemplate.delete(key);
     }
 }
