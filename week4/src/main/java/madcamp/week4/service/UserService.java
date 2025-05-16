@@ -42,7 +42,7 @@ public class UserService {
 
         // 가입하자마자 로그인 토큰 발급
         String accessToken = jwtProvider.createAccessToken(user.getUserName(), user.getUserId());
-        String refreshToken = jwtProvider.createRefreshToken();
+        String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
         jwtProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
         user.updateRefreshToken(refreshToken);
@@ -59,7 +59,7 @@ public class UserService {
         }
 
         String accessToken = jwtProvider.createAccessToken(user.getUserName(), user.getUserId());
-        String refreshToken = jwtProvider.createRefreshToken();
+        String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
         jwtProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
 
         user.updateRefreshToken(refreshToken);
