@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import madcamp.week4.model.RefreshToken;
 import madcamp.week4.model.User;
 import madcamp.week4.repository.UserRepository;
 
@@ -25,7 +26,7 @@ import java.util.List;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final List<String> NO_CHECK_URLS = List.of("/api/user/login", "/swagger-ui", "/api/user/signup", "/v3/api-docs", "/upload/glb");
+    private static final List<String> NO_CHECK_URLS = List.of("/api/users/login", "/swagger-ui", "/api/users/signup", "/v3/api-docs");
 
     public final JwtProvider jwtProvider;
     public final UserRepository userRepository;
@@ -59,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 checkAccessTokenAndAuthentication(request, response, filterChain);
             }
             // refreshtoken 유효 -> accesstoken 재발급
-            if(refreshToken != null && jwtProvider.isRefreshTokenValid(refreshToken)) {
+            if(refreshToken != null) {
                 reIssueAccessToken(response, refreshToken);
                 return;
             }
@@ -76,10 +77,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public void reIssueAccessToken(HttpServletResponse response, String refreshToken) throws IOException {
-        log.info("리프레시토큰이 유효하나 DB에 있는지는 모름. DB에서 찾아봐서 없으면 예외 발생할 것임.");
-        User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new JWTVerificationException("유효하지 않은 리프레시 토큰입니다."));
-        jwtProvider.sendAccessToken(response, jwtProvider.createAccessToken(user.getUserName(), user.getUserId()));
+        log.info("reIssueAccessToken() 호출");
+        User user = jwtProvider.validateAndGetUserByRefreshToken(refreshToken);
+        log.info("기존 리프레시토큰, oldRefreshToken = {}", refreshToken);
+        String newRefreshToken = jwtProvider.rotateRefreshToken(refreshToken);
+        log.info("새로운 리프레시토큰, newRefreshToken = {}", newRefreshToken);
+        jwtProvider.sendAccessAndRefreshToken(response, jwtProvider.createAccessToken(user.getUserName(), user.getUserId()), newRefreshToken);
     }
 
     public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,

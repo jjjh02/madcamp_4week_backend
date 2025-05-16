@@ -10,12 +10,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import madcamp.week4.model.RefreshToken;
+import madcamp.week4.model.User;
+import madcamp.week4.repository.RefreshTokenRepository;
 import madcamp.week4.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +52,7 @@ public class JwtProvider {
     private static final String USER_ID_CLAIM = "userId";
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // accessToken 생성
     public String createAccessToken(String userName, Long userId) {
@@ -60,12 +66,17 @@ public class JwtProvider {
     }
 
     // refreshToken 생성
-    public String createRefreshToken() {
-        Date now = new Date();
-        return JWT.create()
-                .withSubject(REFRESH_TOKEN_SUBJECT)
-                .withExpiresAt(new Date(now.getTime() + refreshTokenExpirationPeriod))
-                .sign(Algorithm.HMAC512(secretKey));
+    public String createRefreshToken(Long userId) {
+        String token = UUID.randomUUID().toString(); // 문자열 비교만 하므로 UUID 사용
+        long now = Instant.now().toEpochMilli();
+        RefreshToken refreshToken = RefreshToken.builder()
+                .userId(userId)
+                .token(token)
+                .issuedAt(now)
+                .ttl(refreshTokenExpirationPeriod)
+                .build();
+        refreshTokenRepository.save(refreshToken);
+        return token;
     }
 
     // accessToken header 통해 전송
@@ -82,7 +93,7 @@ public class JwtProvider {
 
         setAccessTokenHeader(response, accessToken);
         setRefreshTokenHeader(response, refreshToken);
-        log.info("accesstoken: " + accessToken + "refreshtoken" + refreshToken);
+        log.info("accesstoken: " + accessToken + " refreshtoken" + refreshToken);
         log.info("Access Token, Refresh Token 헤더 설정 완료");
     }
 
@@ -173,16 +184,28 @@ public class JwtProvider {
     }
 
     // refreshtoken 유효성 확인
-    public boolean isRefreshTokenValid(String token) {
-        try {
-            JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
-            log.info("유효한 리프레시 토큰입니다.");
-            return true;
-        } catch (JWTVerificationException e) {
-            log.error("유효하지 않은 리프레시 토큰입니다. {}", e.getMessage());
-            throw new JWTVerificationException("리프레시 토큰이 유효하지 않습니다.");
+    public User validateAndGetUserByRefreshToken(String presentedRefreshToken) {
+        RefreshToken tokenEntity = refreshTokenRepository.findById(presentedRefreshToken)
+                .orElseThrow(() -> new JWTVerificationException("존재하지 않는 refreshToken입니다."));
+
+        long now = Instant.now().toEpochMilli();
+        if (now - tokenEntity.getIssuedAt() > refreshTokenExpirationPeriod) {
+            refreshTokenRepository.deleteById(tokenEntity.getToken());
+            throw new JWTVerificationException("만료된 refreshToken입니다.");
         }
+
+        return userRepository.findByUserId(tokenEntity.getUserId())
+                .orElseThrow(() -> new JWTVerificationException("해당 refreshToken의 사용자 정보를 찾을 수 없습니다."));
     }
+
+    // 기존 refreshtoken 삭제 후 새로 발급
+    public String rotateRefreshToken(String token) {
+        RefreshToken tokenEntity = refreshTokenRepository.findById(token)
+                .orElseThrow(() -> new JWTVerificationException("존재하지 않는 refreshToken입니다."));
+        refreshTokenRepository.deleteById(token);
+        return createRefreshToken(tokenEntity.getUserId());
+    }
+
 }
 
 
